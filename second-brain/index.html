@@ -36,7 +36,7 @@ body {
 .underlay { z-index: 1; }
 .base-wrap {
   position: absolute;
-  left: 55%;
+  left: 49%;
   top: 50%;
   width: 559px;
   height: 559px;
@@ -46,7 +46,7 @@ body {
 }
 .brain-wrap {
   position: absolute;
-  left: 55%;
+  left: 49%;
   top: 28%;
   width: 241px;
   height: auto;
@@ -105,7 +105,7 @@ const particleCtx = particleCanvas.getContext('2d');
 const sparkCanvas = document.getElementById('sparkLayer');
 const sparkCtx = sparkCanvas.getContext('2d');
 
-const center = { x: 275, y: 250 };
+const center = { x: 245, y: 250 };
 const particles = Array.from({ length: 90 }, (_, i) => {
   const a = Math.random() * Math.PI * 2;
   const radius = 42 + Math.random() * 178;
@@ -120,7 +120,7 @@ const particles = Array.from({ length: 90 }, (_, i) => {
 });
 
 const sparks = Array.from({ length: 34 }, () => ({
-  x: 135 + Math.random() * 280,
+  x: 105 + Math.random() * 280,
   y: 108 + Math.random() * 284,
   vx: (Math.random() - 0.5) * 0.42,
   vy: (Math.random() - 0.5) * 0.42,
