@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOMAD Architettura</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+
+body {
+  
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene {
+  perspective: 1000px;
+  position: relative;
+}
+
+.card {
+  width: 380px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.11);
+  border: 1px solid rgba(255,255,255,0.38);
+  position: relative;
+  overflow: hidden;
+  transform: rotateY(-16deg) rotateX(5deg) rotateZ(-1.5deg);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.card.in { opacity: 1; }
+
+.shine {
+  position: absolute; top: 0; left: 0; right: 0; height: 42%;
+  background: linear-gradient(175deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 24px 24px 0 0;
+  pointer-events: none; z-index: 3;
+}
+
+.grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 22px 22px; z-index: 1;
+}
+
+.ci {
+  position: relative; z-index: 2;
+  padding: 24px 26px 22px;
+}
+
+.top-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.top-row.in { opacity: 1; transform: translateY(0); }
+
+.logo {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.95);
+  border: 1.5px solid rgba(255,255,255,0.55);
+  padding: 5px 14px; border-radius: 30px;
+}
+
+.studio {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.45);
+}
+.dot-g {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #5DCAA5; flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hl {
+  font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.4); margin-bottom: 5px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.hl.in { opacity: 1; transform: translateY(0); }
+
+.kpi-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 20px; }
+
+.kpi-n {
+  font-size: 56px; font-weight: 700; color: rgba(255,255,255,0.95); line-height: 1;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.2,0.64,1);
+}
+.kpi-n.in { opacity: 1; transform: translateY(0); }
+
+.kpi-u { font-size: 18px; font-weight: 500; color: rgba(255,255,255,0.35); }
+
+.kpi-badge {
+  font-size: 10px; font-weight: 600; padding: 4px 10px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8); border-radius: 20px; margin-left: 4px;
+  opacity: 0; transform: scale(0.7);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34,1.5,0.64,1);
+}
+.kpi-badge.in { opacity: 1; transform: scale(1); }
+
+.divider {
+  height: 1px; background: rgba(255,255,255,0.14); margin-bottom: 16px;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.6s ease;
+}
+.divider.in { transform: scaleX(1); }
+
+.tasks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+
+.task {
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.task.in { opacity: 1; transform: translateX(0); }
+
+.ticon {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  transform: scale(0.6) rotate(-8deg);
+  transition: transform 0.4s cubic-bezier(0.34,1.5,0.64,1) 0.1s;
+}
+.task.in .ticon { transform: scale(1) rotate(0deg); }
+.ticon i { font-size: 15px; color: rgba(255,255,255,0.75); }
+
+.tbody { flex: 1; }
+.tname { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); }
+.tdesc { font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.38); margin-top: 1px; }
+
+.tbadge {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 3px 9px; border-radius: 20px; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.1);
+  opacity: 0; transform: scale(0.6);
+  transition: opacity 0.3s ease 0.15s, transform 0.3s cubic-bezier(0.34,1.5,0.64,1) 0.15s;
+}
+.task.in .tbadge { opacity: 1; transform: scale(1); }
+
+.pbars {
+  margin-bottom: 18px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.pbars.in { opacity: 1; transform: translateY(0); }
+
+.prow { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.plabel { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.45); width: 122px; flex-shrink: 0; }
+.pwrap { flex: 1; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.pbar { height: 100%; border-radius: 3px; background: rgba(255,255,255,0.65); width: 0%; transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
+.ppct { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.35); width: 26px; text-align: right; flex-shrink: 0; }
+
+.foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.12);
+}
+.fstat { text-align: center; flex: 1; }
+.fnum {
+  font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.95);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34,1.3,0.64,1);
+}
+.fnum.in { opacity: 1; transform: translateY(0); }
+.flabel { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; color: rgba(255,255,255,0.28); margin-top: 2px; text-transform: uppercase; }
+.fsep { width: 1px; height: 28px; background: rgba(255,255,255,0.1); }
+
+.replay-wrap {
+  position: fixed; bottom: 20px; right: 20px;
+}
+.replay-btn {
+  font-size: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600;
+  padding: 6px 16px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+  background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5);
+  transition: background 0.2s ease;
+}
+.replay-btn:hover { background: rgba(255,255,255,0.13); }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="card" id="card">
+    <div class="shine"></div>
+    <div class="grid-bg"></div>
+    <div class="ci">
+
+      <div class="top-row" id="tr">
+        <div class="logo">NOMAD</div>
+        <div class="studio"><div class="dot-g"></div>Studio Ferretti &amp; Partners</div>
+      </div>
+
+      <div class="hl" id="hl">Questa settimana hai risparmiato</div>
+      <div class="kpi-row">
+        <div class="kpi-n" id="kn">0</div>
+        <div class="kpi-u">ore</div>
+        <div class="kpi-badge" id="kb">+34% vs media</div>
+      </div>
+
+      <div class="divider" id="dv"></div>
+
+      <div class="tasks">
+        <div class="task" id="t0">
+          <div class="ticon"><i class="ti ti-file-text"></i></div>
+          <div class="tbody"><div class="tname">Specifiche tecniche</div><div class="tdesc">3 documenti redatti da template studio</div></div>
+          <div class="tbadge">NOMAD</div>
+        </div>
+        <div class="task" id="t1">
+          <div class="ticon"><i class="ti ti-receipt"></i></div>
+          <div class="tbody"><div class="tname">Offerte economiche</div><div class="tdesc">2 offerte preparate e inviate</div></div>
+          <div class="tbadge">Inviato</div>
+        </div>
+        <div class="task" id="t2">
+          <div class="ticon"><i class="ti ti-mail"></i></div>
+          <div class="tbody"><div class="tname">Comunicazioni</div><div class="tdesc">17 messaggi gestiti autonomamente</div></div>
+          <div class="tbadge">NOMAD</div>
+        </div>
+        <div class="task" id="t3">
+          <div class="ticon"><i class="ti ti-chart-line"></i></div>
+          <div class="tbody"><div class="tname">Aggiornamenti SAL</div><div class="tdesc">3 cantieri aggiornati automaticamente</div></div>
+          <div class="tbadge">Auto</div>
+        </div>
+      </div>
+
+      <div class="pbars" id="pb">
+        <div class="prow"><div class="plabel">Via Amendola</div><div class="pwrap"><div class="pbar" id="p0"></div></div><div class="ppct">72%</div></div>
+        <div class="prow"><div class="plabel">Palazzo Commerciale</div><div class="pwrap"><div class="pbar" id="p1"></div></div><div class="ppct">45%</div></div>
+        <div class="prow"><div class="plabel">Polo Logistico</div><div class="pwrap"><div class="pbar" id="p2"></div></div><div class="ppct">28%</div></div>
+      </div>
+
+      <div class="foot">
+        <div class="fstat"><div class="fnum" id="f0">4</div><div class="flabel">Progetti</div></div>
+        <div class="fsep"></div>
+        <div class="fstat"><div class="fnum" id="f1">17</div><div class="flabel">Messaggi</div></div>
+        <div class="fsep"></div>
+        <div class="fstat"><div class="fnum" id="f2">3</div><div class="flabel">SAL</div></div>
+        <div class="fsep"></div>
+        <div class="fstat"><div class="fnum" id="f3">12h</div><div class="flabel">Liberate</div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="replay-wrap">
+  <button class="replay-btn" onclick="run()">↺ Rivedi</button>
+</div>
+
+<script>
+const d = ms => new Promise(r => setTimeout(r, ms));
+
+function countUp(el, target, dur) {
+  el.textContent = '0'; let v = 0;
+  const step = Math.max(1, Math.ceil(target / (dur / 50)));
+  const iv = setInterval(() => { v = Math.min(v + step, target); el.textContent = v; if (v >= target) clearInterval(iv); }, 50);
+}
+
+function reset() {
+  ['card','tr','hl','kn','kb','dv','pb','t0','t1','t2','t3','f0','f1','f2','f3'].forEach(id => {
+    const e = document.getElementById(id);
+    e.style.transition = 'none'; e.classList.remove('in');
+  });
+  document.getElementById('kn').textContent = '0';
+  ['p0','p1','p2'].forEach(id => { const e = document.getElementById(id); e.style.transition = 'none'; e.style.width = '0%'; });
+}
+
+async function run() {
+  reset(); await d(80);
+
+  const card = document.getElementById('card');
+  card.style.transition = 'opacity 0.8s ease'; card.classList.add('in');
+  await d(500);
+
+  const tr = document.getElementById('tr');
+  tr.style.transition = 'opacity 0.5s ease, transform 0.5s ease'; tr.classList.add('in');
+  await d(220);
+
+  const hl = document.getElementById('hl');
+  hl.style.transition = 'opacity 0.5s ease, transform 0.5s ease'; hl.classList.add('in');
+  await d(180);
+
+  const kn = document.getElementById('kn');
+  kn.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.2,0.64,1)'; kn.classList.add('in');
+  countUp(kn, 12, 900);
+  await d(150);
+
+  const kb = document.getElementById('kb');
+  kb.style.transition = 'opacity 0.4s ease, transform 0.4s cubic-bezier(0.34,1.5,0.64,1)'; kb.classList.add('in');
+  await d(320);
+
+  const dv = document.getElementById('dv');
+  dv.style.transition = 'transform 0.6s ease'; dv.classList.add('in');
+  await d(200);
+
+  for (let i = 0; i < 4; i++) {
+    await d(130);
+    const t = document.getElementById('t' + i);
+    t.style.transition = 'opacity 0.4s ease, transform 0.4s ease'; t.classList.add('in');
+  }
+  await d(260);
+
+  const pb = document.getElementById('pb');
+  pb.style.transition = 'opacity 0.5s ease, transform 0.5s ease'; pb.classList.add('in');
+  await d(280);
+
+  ['p0','p1','p2'].forEach((id, i) => {
+    setTimeout(() => {
+      const e = document.getElementById(id);
+      e.style.transition = 'width 1.1s cubic-bezier(0.4,0,0.2,1)';
+      e.style.width = ['72%','45%','28%'][i];
+    }, i * 130);
+  });
+  await d(600);
+
+  for (let i = 0; i < 4; i++) {
+    await d(90);
+    const f = document.getElementById('f' + i);
+    f.style.transition = 'opacity 0.45s ease, transform 0.45s cubic-bezier(0.34,1.3,0.64,1)'; f.classList.add('in');
+  }
+}
+
+run();
+</script>
+</body>
+</html>
