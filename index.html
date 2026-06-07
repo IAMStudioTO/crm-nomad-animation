@@ -8,14 +8,15 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
   background: transparent;
+  width: 500px;
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: -apple-system, 'Helvetica Neue', sans-serif;
   overflow: hidden;
-  min-height: 520px;
 }
-.scene { position:relative; width:680px; height:500px; }
+.scene { position:relative; width:500px; height:500px; overflow:hidden; }
 .gc {
   position:absolute;
   border-radius:50%;
@@ -62,12 +63,12 @@ body {
   width:108px; height:108px;
   z-index:5;
 }
-.s-crm   { left:108px; top:46px;  animation:fs1 5.5s ease-in-out infinite; }
-.s-erp   { left:464px; top:46px;  animation:fs2 5.5s ease-in-out infinite 0.4s; }
-.s-query { left:504px; top:228px; animation:fs3 5.5s ease-in-out infinite 0.8s; }
-.s-rep   { left:108px; top:346px; animation:fs4 5.5s ease-in-out infinite 1.2s; }
-.s-erp2  { left:464px; top:346px; animation:fs5 5.5s ease-in-out infinite 1.6s; }
-.s-nl    { left:68px;  top:228px; animation:fs6 5.5s ease-in-out infinite 2s; }
+.s-crm   { left:80px;  top:46px;  animation:fs1 5.5s ease-in-out infinite; }
+.s-erp   { left:340px; top:46px;  animation:fs2 5.5s ease-in-out infinite 0.4s; }
+.s-query { left:372px; top:228px; animation:fs3 5.5s ease-in-out infinite 0.8s; }
+.s-rep   { left:80px;  top:346px; animation:fs4 5.5s ease-in-out infinite 1.2s; }
+.s-erp2  { left:340px; top:346px; animation:fs5 5.5s ease-in-out infinite 1.6s; }
+.s-nl    { left:50px;  top:228px; animation:fs6 5.5s ease-in-out infinite 2s; }
 @keyframes fs1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 @keyframes fs2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes fs3 { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
@@ -109,13 +110,13 @@ body {
 
 <div class="scene">
 
-  <svg class="connectors" viewBox="0 0 680 500">
-    <line x1="340" y1="250" x2="166" y2="104"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
-    <line x1="340" y1="250" x2="518" y2="104"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
-    <line x1="340" y1="250" x2="558" y2="283"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
-    <line x1="340" y1="250" x2="166" y2="400"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
-    <line x1="340" y1="250" x2="518" y2="400"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
-    <line x1="340" y1="250" x2="122" y2="283"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+  <svg class="connectors" viewBox="0 0 500 500">
+    <line x1="250" y1="250" x2="134" y2="100"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+    <line x1="250" y1="250" x2="394" y2="100"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+    <line x1="250" y1="250" x2="426" y2="282"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+    <line x1="250" y1="250" x2="134" y2="400"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+    <line x1="250" y1="250" x2="394" y2="400"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
+    <line x1="250" y1="250" x2="104" y2="282"  stroke="rgba(53,173,115,0.22)" stroke-width="0.8" stroke-dasharray="4 4"/>
   </svg>
 
   <!-- CENTER: NOMAD -->
@@ -180,15 +181,15 @@ body {
 
 <script>
 const lines = [
-  { x1:340, y1:250, x2:166, y2:104 },
-  { x1:340, y1:250, x2:518, y2:104 },
-  { x1:340, y1:250, x2:558, y2:283 },
-  { x1:340, y1:250, x2:166, y2:400 },
-  { x1:340, y1:250, x2:518, y2:400 },
-  { x1:340, y1:250, x2:122, y2:283 },
+  { x1:250, y1:250, x2:134, y2:100 },
+  { x1:250, y1:250, x2:394, y2:100 },
+  { x1:250, y1:250, x2:426, y2:282 },
+  { x1:250, y1:250, x2:134, y2:400 },
+  { x1:250, y1:250, x2:394, y2:400 },
+  { x1:250, y1:250, x2:104, y2:282 },
 ];
 const scene = document.querySelector('.scene');
-const sceneW = 680, sceneH = 500;
+const sceneW = 500, sceneH = 500;
 
 lines.forEach((l, i) => {
   [0, 0.5, 1].forEach(phase => {
