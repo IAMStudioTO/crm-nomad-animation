@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecondBrain Animation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,
+body {
+  width: 500px;
+  height: 500px;
+  overflow: hidden;
+  background: transparent;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+.stage {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.underlay { z-index: 1; }
+.base-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 355px;
+  height: 355px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+}
+.brain-wrap {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 150px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  pointer-events: none;
+  animation: brainFloat 5.6s ease-in-out infinite;
+}
+.brain-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(53,252,176,0.18), rgba(53,252,176,0) 64%);
+  filter: blur(18px);
+  animation: coreGlow 4.8s ease-in-out infinite;
+}
+.base-svg,
+.brain-svg {
+  position: relative;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.base-svg { height: 100%; }
+.overlay { z-index: 4; mix-blend-mode: screen; }
+@keyframes coreGlow {
+  0%, 100% { opacity: 0.58; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes brainFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-9px); }
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <canvas class="layer underlay" id="particleLayer" width="500" height="500"></canvas>
+
+  <div class="base-wrap">
+    <img class="base-svg" src="Base%20SecondBrain.svg" alt="Base SecondBrain">
+  </div>
+
+  <div class="brain-wrap">
+    <img class="brain-svg" src="Brain.svg" alt="Brain">
+  </div>
+
+  <canvas class="layer overlay" id="sparkLayer" width="500" height="500"></canvas>
+</div>
+
+<script>
+const particleCanvas = document.getElementById('particleLayer');
+const particleCtx = particleCanvas.getContext('2d');
+const sparkCanvas = document.getElementById('sparkLayer');
+const sparkCtx = sparkCanvas.getContext('2d');
+
+const center = { x: 250, y: 250 };
+const particles = Array.from({ length: 90 }, (_, i) => {
+  const a = Math.random() * Math.PI * 2;
+  const radius = 42 + Math.random() * 178;
+  return {
+    a,
+    radius,
+    speed: (0.0015 + Math.random() * 0.0022) * (i % 2 ? 1 : -1),
+    size: 0.45 + Math.random() * 1.6,
+    alpha: 0.12 + Math.random() * 0.42,
+    wobble: Math.random() * Math.PI * 2
+  };
+});
+
+const sparks = Array.from({ length: 34 }, () => ({
+  x: 110 + Math.random() * 280,
+  y: 108 + Math.random() * 284,
+  vx: (Math.random() - 0.5) * 0.42,
+  vy: (Math.random() - 0.5) * 0.42,
+  life: Math.random(),
+  size: 0.6 + Math.random() * 1.2
+}));
+
+function drawUnderlay() {
+  particleCtx.clearRect(0, 0, 500, 500);
+  particleCtx.save();
+  particleCtx.globalCompositeOperation = 'screen';
+
+  particles.forEach((p) => {
+    p.a += p.speed;
+    p.wobble += 0.012;
+    const r = p.radius + Math.sin(p.wobble) * 7;
+    const x = center.x + Math.cos(p.a) * r;
+    const y = center.y + Math.sin(p.a) * r * 0.86;
+
+    particleCtx.beginPath();
+    particleCtx.arc(x, y, p.size, 0, Math.PI * 2);
+    particleCtx.fillStyle = `rgba(53,252,176,${p.alpha})`;
+    particleCtx.fill();
+  });
+
+  particleCtx.restore();
+  requestAnimationFrame(drawUnderlay);
+}
+
+function drawOverlay() {
+  sparkCtx.clearRect(0, 0, 500, 500);
+  sparkCtx.save();
+  sparkCtx.globalCompositeOperation = 'screen';
+
+  sparks.forEach((s) => {
+    s.x += s.vx;
+    s.y += s.vy;
+    s.life += 0.012;
+
+    const dx = s.x - center.x;
+    const dy = s.y - center.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > 188 || s.life > 1) {
+      const a = Math.random() * Math.PI * 2;
+      const r = 44 + Math.random() * 135;
+      s.x = center.x + Math.cos(a) * r;
+      s.y = center.y + Math.sin(a) * r;
+      s.vx = (Math.random() - 0.5) * 0.42;
+      s.vy = (Math.random() - 0.5) * 0.42;
+      s.life = 0;
+    }
+
+    const alpha = Math.sin(s.life * Math.PI) * 0.62;
+    sparkCtx.beginPath();
+    sparkCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    sparkCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+    sparkCtx.fill();
+  });
+
+  sparkCtx.restore();
+  requestAnimationFrame(drawOverlay);
+}
+
+drawUnderlay();
+drawOverlay();
+</script>
+</body>
+</html>
