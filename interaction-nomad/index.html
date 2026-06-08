@@ -46,7 +46,7 @@
       height: 62px;
       object-fit: contain;
       filter: brightness(0) invert(1);
-      transform: translateX(3px);
+      transform: translateX(7px);
     }
     .node {
       position: absolute;
@@ -92,27 +92,24 @@
   ];
 
   const W = 860, H = 520;
-  const cx = W / 2, cy = H / 2; // 430, 260
+  const cx = W / 2, cy = H / 2;
 
-  // Posizioni fisse ben distanziate attorno al centro, no sovrapposizioni
-  // Cerchio con spacing ~90px tra nodi, distribuiti su 3 "anelli" di raggio variabile
   const positions = [
-    { x: 160, y: 100 },
-    { x: 340, y: 80  },
-    { x: 520, y: 80  },
-    { x: 690, y: 120 },
-    { x: 710, y: 280 },
-    { x: 660, y: 420 },
-    { x: 470, y: 430 },
-    { x: 270, y: 420 },
-    { x: 140, y: 360 },
-    { x: 130, y: 200 },
+    { x: 219, y: 135 },
+    { x: 360, y: 120 },
+    { x: 500, y: 120 },
+    { x: 633, y: 151 },
+    { x: 648, y: 276 },
+    { x: 609, y: 385 },
+    { x: 461, y: 393 },
+    { x: 305, y: 385 },
+    { x: 204, y: 338 },
+    { x: 196, y: 213 },
   ];
 
   const scene = document.getElementById('scene');
   const svgEl = document.getElementById('lines');
 
-  // Crea nodi fissi
   const nodeEls = logos.map((logo, i) => {
     const div = document.createElement('div');
     div.className = 'node';
@@ -127,20 +124,14 @@
     return div;
   });
 
-  // SVG defs
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
   svgEl.appendChild(defs);
 
-  // Path PCB a 90°: alterna modalità per varietà visiva
   function pcbPath(x1, y1, x2, y2, mode) {
-    if (mode === 0) {
-      return `M${x1},${y1} L${x2},${y1} L${x2},${y2}`;
-    } else if (mode === 1) {
-      return `M${x1},${y1} L${x1},${y2} L${x2},${y2}`;
-    } else {
-      const mx = (x1 + x2) / 2;
-      return `M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`;
-    }
+    if (mode === 0) return `M${x1},${y1} L${x2},${y1} L${x2},${y2}`;
+    if (mode === 1) return `M${x1},${y1} L${x1},${y2} L${x2},${y2}`;
+    const mx = (x1 + x2) / 2;
+    return `M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`;
   }
 
   function pcbPts(x1, y1, x2, y2, mode) {
@@ -197,7 +188,6 @@
 
     const d = pcbPath(cx, cy, nx, ny, modes[i]);
 
-    // Traccia tratteggiata
     const track = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     track.setAttribute('d', d);
     track.setAttribute('fill', 'none');
@@ -207,7 +197,6 @@
     track.setAttribute('opacity', '0.3');
     svgEl.appendChild(track);
 
-    // Glow
     const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     glow.setAttribute('d', d);
     glow.setAttribute('fill', 'none');
@@ -216,7 +205,6 @@
     glow.setAttribute('stroke-linecap', 'round');
     svgEl.appendChild(glow);
 
-    // Cerchietti ai gomiti
     const pts = pcbPts(cx, cy, nx, ny, modes[i]);
     pts.slice(1, -1).forEach(p => {
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -227,7 +215,6 @@
       svgEl.appendChild(c);
     });
 
-    // Pallino scorrevole
     const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     dot.setAttribute('r', '3');
     dot.setAttribute('fill', '#7DEBA3');
@@ -237,7 +224,6 @@
     return { dot, pts, phase: Math.random() * Math.PI * 2, speed: 0.4 + Math.random() * 0.35 };
   });
 
-  // Solo il pallino si muove lungo la traccia fissa
   function animate(t) {
     const ts = t / 1000;
     connectors.forEach((conn) => {
