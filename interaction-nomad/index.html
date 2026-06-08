@@ -166,15 +166,110 @@
     return div;
   });
 
-  // Crea linee SVG
-  const lines = logos.map((_, i) => {
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('stroke', '#35AD73');
-    line.setAttribute('stroke-width', '1.5');
-    line.setAttribute('stroke-dasharray', '5 4');
-    line.setAttribute('opacity', '0.4');
-    svgEl.appendChild(line);
-    return line;
+  // Defs per i gradienti luminosi
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  svgEl.appendChild(defs);
+
+  // Funzione: genera path a 90° stile PCB tra (x1,y1) e (x2,y2)
+  // Fa prima il tratto orizzontale poi verticale (o viceversa, alternato per varietà)
+  function pcbPath(x1, y1, x2, y2, mode) {
+    if (mode === 0) {
+      // H poi V: va orizzontale fino a x2, poi verticale fino a y2
+      return `M${x1},${y1} L${x2},${y1} L${x2},${y2}`;
+    } else if (mode === 1) {
+      // V poi H: va verticale fino a y2, poi orizzontale fino a x2
+      return `M${x1},${y1} L${x1},${y2} L${x2},${y2}`;
+    } else {
+      // Doppio gomito: H metà, V, H resto
+      const mx = (x1 + x2) / 2;
+      return `M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`;
+    }
+  }
+
+  // Lunghezza totale di un path a segmenti
+  function pathLen(pts) {
+    let len = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i].x - pts[i-1].x;
+      const dy = pts[i].y - pts[i-1].y;
+      len += Math.sqrt(dx*dx + dy*dy);
+    }
+    return len;
+  }
+
+  // Punto a distanza t (0-1) lungo una lista di segmenti
+  function pointOnPath(pts, t) {
+    const total = pathLen(pts);
+    let traveled = 0;
+    const target = t * total;
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i].x - pts[i-1].x;
+      const dy = pts[i].y - pts[i-1].y;
+      const seg = Math.sqrt(dx*dx + dy*dy);
+      if (traveled + seg >= target) {
+        const rem = (target - traveled) / seg;
+        return { x: pts[i-1].x + dx * rem, y: pts[i-1].y + dy * rem };
+      }
+      traveled += seg;
+    }
+    return pts[pts.length - 1];
+  }
+
+  const modes = logos.map((_, i) => i % 3);
+
+  const connectors = logos.map((_, i) => {
+    const gradId = 'grad' + i;
+
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#7DEBA3'); s1.setAttribute('stop-opacity', '0');
+    const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s2.setAttribute('offset', '50%'); s2.setAttribute('stop-color', '#35AD73'); s2.setAttribute('stop-opacity', '0.7');
+    const s3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s3.setAttribute('offset', '100%'); s3.setAttribute('stop-color', '#7DEBA3'); s3.setAttribute('stop-opacity', '0');
+    grad.appendChild(s1); grad.appendChild(s2); grad.appendChild(s3);
+    defs.appendChild(grad);
+
+    // Traccia base PCB
+    const track = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', '#35AD73');
+    track.setAttribute('stroke-width', '1.2');
+    track.setAttribute('stroke-dasharray', '4 4');
+    track.setAttribute('opacity', '0.3');
+    svgEl.appendChild(track);
+
+    // Glow sopra
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', `url(#${gradId})`);
+    glow.setAttribute('stroke-width', '5');
+    glow.setAttribute('stroke-linecap', 'round');
+    svgEl.appendChild(glow);
+
+    // Cerchietti ai gomiti
+    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c1.setAttribute('r', '3'); c1.setAttribute('fill', 'none');
+    c1.setAttribute('stroke', '#35AD73'); c1.setAttribute('stroke-width', '1.5');
+    c1.setAttribute('opacity', '0.6');
+    svgEl.appendChild(c1);
+
+    const c2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c2.setAttribute('r', '3'); c2.setAttribute('fill', 'none');
+    c2.setAttribute('stroke', '#35AD73'); c2.setAttribute('stroke-width', '1.5');
+    c2.setAttribute('opacity', '0.6');
+    svgEl.appendChild(c2);
+
+    // Pallino scorrevole
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', '3');
+    dot.setAttribute('fill', '#7DEBA3');
+    dot.setAttribute('opacity', '0.95');
+    svgEl.appendChild(dot);
+
+    return { track, glow, grad, c1, c2, dot, phase: Math.random() * Math.PI * 2, speed: 0.5 + Math.random() * 0.4 };
   });
 
   // Animazione
@@ -190,10 +285,38 @@
       nodeEls[i].style.left = (nx - 36) + 'px';
       nodeEls[i].style.top  = (ny - 36) + 'px';
 
-      lines[i].setAttribute('x1', cx);
-      lines[i].setAttribute('y1', cy);
-      lines[i].setAttribute('x2', nx);
-      lines[i].setAttribute('y2', ny);
+      const d = pcbPath(cx, cy, nx, ny, modes[i]);
+      connectors[i].track.setAttribute('d', d);
+      connectors[i].glow.setAttribute('d', d);
+
+      // Aggiorna gradiente
+      connectors[i].grad.setAttribute('x1', cx); connectors[i].grad.setAttribute('y1', cy);
+      connectors[i].grad.setAttribute('x2', nx); connectors[i].grad.setAttribute('y2', ny);
+
+      // Calcola punti gomito per cerchietti e pallino
+      let pts;
+      if (modes[i] === 0) {
+        pts = [{x:cx,y:cy},{x:nx,y:cy},{x:nx,y:ny}];
+        connectors[i].c1.setAttribute('cx', nx); connectors[i].c1.setAttribute('cy', cy);
+        connectors[i].c2.setAttribute('cx', nx); connectors[i].c2.setAttribute('cy', ny);
+        connectors[i].c2.setAttribute('opacity', '0');
+      } else if (modes[i] === 1) {
+        pts = [{x:cx,y:cy},{x:cx,y:ny},{x:nx,y:ny}];
+        connectors[i].c1.setAttribute('cx', cx); connectors[i].c1.setAttribute('cy', ny);
+        connectors[i].c2.setAttribute('opacity', '0');
+      } else {
+        const mx2 = (cx + nx) / 2;
+        pts = [{x:cx,y:cy},{x:mx2,y:cy},{x:mx2,y:ny},{x:nx,y:ny}];
+        connectors[i].c1.setAttribute('cx', mx2); connectors[i].c1.setAttribute('cy', cy);
+        connectors[i].c2.setAttribute('cx', mx2); connectors[i].c2.setAttribute('cy', ny);
+        connectors[i].c2.setAttribute('opacity', '0.6');
+      }
+
+      // Pallino che scorre ciclicamente
+      const prog = (ts * connectors[i].speed + connectors[i].phase) % 1;
+      const bp = pointOnPath(pts, prog);
+      connectors[i].dot.setAttribute('cx', bp.x);
+      connectors[i].dot.setAttribute('cy', bp.y);
     });
     requestAnimationFrame(animate);
   }
