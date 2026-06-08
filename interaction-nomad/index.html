@@ -30,6 +30,11 @@
       position: absolute;
       left: 50%;
       top: 50%;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: #35AD73;
+      box-shadow: 0 10px 34px rgba(53,173,115,0.35), 0 0 0 10px rgba(53,173,115,0.08);
       transform: translate(-50%, -50%);
       z-index: 10;
       display: flex;
@@ -37,9 +42,11 @@
       justify-content: center;
     }
     .node-center img {
-      width: 80px;
-      height: 80px;
+      width: 62px;
+      height: 62px;
       object-fit: contain;
+      filter: brightness(0) invert(1);
+      transform: translateX(3px);
     }
     .node {
       position: absolute;
