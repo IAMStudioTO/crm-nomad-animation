@@ -1,50 +1,248 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NOMAD - Network</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}html,body{background:transparent}body{display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden}.scene{position:relative;width:800px;height:480px}.lines-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}.node-center{position:absolute;display:flex;align-items:center;justify-content:center;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10}.node-center img{width:72px;height:72px;object-fit:contain}.node{position:absolute;width:72px;height:72px;border-radius:20px;background:#35AD73;box-shadow:0 4px 20px rgba(53,173,115,.25);display:flex;align-items:center;justify-content:center;z-index:5;transition:box-shadow .3s}.node:hover{box-shadow:0 8px 32px rgba(53,173,115,.45)}.node img{width:42px;height:42px;object-fit:contain}.dot{position:absolute;border-radius:50%;background:#35AD73;opacity:.35;z-index:2}@keyframes float1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOMAD – Network</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .scene {
+      position: relative;
+      width: 860px;
+      height: 520px;
+    }
+    .lines-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .node-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .node-center img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+    .node {
+      position: absolute;
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      background: #35AD73;
+      box-shadow: 0 4px 18px rgba(53,173,115,0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      transition: box-shadow 0.3s;
+    }
+    .node:hover { box-shadow: 0 8px 28px rgba(53,173,115,0.5); }
+    .node img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+  </style>
 </head>
 <body>
 <div class="scene" id="scene">
   <svg class="lines-svg" id="lines"></svg>
-  <div class="node-center" id="center"><img src="https://titan-nomad.ch/wp-content/uploads/2026/06/Mini-Logo-NOMAD.svg" alt="NOMAD"></div>
-  <div class="dot" style="width:10px;height:10px;left:18%;top:38%;animation:float1 4.2s ease-in-out infinite;"></div>
-  <div class="dot" style="width:7px;height:7px;left:38%;top:14%;animation:float2 3.8s ease-in-out infinite;"></div>
-  <div class="dot" style="width:8px;height:8px;left:62%;top:72%;animation:float1 5s ease-in-out infinite;"></div>
-  <div class="dot" style="width:6px;height:6px;left:78%;top:28%;animation:float2 4.5s ease-in-out infinite;"></div>
-  <div class="dot" style="width:9px;height:9px;left:85%;top:60%;animation:float1 3.6s ease-in-out infinite;"></div>
+  <div class="node-center">
+    <img src="https://titan-nomad.ch/wp-content/uploads/2026/06/Mini-Logo-NOMAD.svg" alt="NOMAD">
+  </div>
 </div>
+
 <script>
-const logos=[
-{name:'Slack',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Slack.svg'},
-{name:'Gmail',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-GMail.svg'},
-{name:'Salesforce',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Sales-Force.svg'},
-{name:'Autocad',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Autocad.svg'},
-{name:'Google Suite',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Google-Suite.svg'},
-{name:'Microsoft',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Microsoft.svg'},
-{name:'HubSpot',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-HubSpot.svg'},
-{name:'OpenAI',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-OpenAI.svg'},
-{name:'Claude',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Claude.svg'},
-{name:'Teams',url:'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Teams.svg'}
-];
-const scene=document.getElementById('scene');
-const svgEl=document.getElementById('lines');
-const W=800,H=480,cx=W/2,cy=H/2;
-const positions=[{x:90,y:90},{x:310,y:55},{x:560,y:60},{x:700,y:130},{x:720,y:330},{x:560,y:400},{x:330,y:415},{x:120,y:380},{x:60,y:220},{x:200,y:200}];
-const floatParams=logos.map(()=>({dx:(Math.random()-.5)*50,dy:(Math.random()-.5)*50,dx2:(Math.random()-.5)*28,dy2:(Math.random()-.5)*28,speed:1.6+Math.random()*1.8,speed2:2.8+Math.random()*2,phase:Math.random()*Math.PI*2,phase2:Math.random()*Math.PI*2}));
-const nodeEls=logos.map((logo,i)=>{const div=document.createElement('div');div.className='node';div.style.left=positions[i].x-36+'px';div.style.top=positions[i].y-36+'px';const img=document.createElement('img');img.src=logo.url;img.alt=logo.name;img.onerror=()=>{img.style.display='none'};div.appendChild(img);scene.appendChild(div);return div});
-const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');svgEl.appendChild(defs);
-function pcbPath(x1,y1,x2,y2,mode){if(mode===0)return`M${x1},${y1} L${x2},${y1} L${x2},${y2}`;if(mode===1)return`M${x1},${y1} L${x1},${y2} L${x2},${y2}`;const mx=(x1+x2)/2;return`M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`}
-function pathLen(pts){let len=0;for(let i=1;i<pts.length;i++){const dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y;len+=Math.sqrt(dx*dx+dy*dy)}return len}
-function pointOnPath(pts,t){const total=pathLen(pts);let traveled=0,target=t*total;for(let i=1;i<pts.length;i++){const dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y,seg=Math.sqrt(dx*dx+dy*dy);if(traveled+seg>=target){const rem=(target-traveled)/seg;return{x:pts[i-1].x+dx*rem,y:pts[i-1].y+dy*rem}}traveled+=seg}return pts[pts.length-1]}
-const modes=logos.map((_,i)=>i%3);
-const connectors=logos.map((_,i)=>{const gradId='grad'+i;const grad=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');grad.setAttribute('id',gradId);grad.setAttribute('gradientUnits','userSpaceOnUse');[['0%','#7DEBA3','0'],['50%','#35AD73','.7'],['100%','#7DEBA3','0']].forEach(s=>{const stop=document.createElementNS('http://www.w3.org/2000/svg','stop');stop.setAttribute('offset',s[0]);stop.setAttribute('stop-color',s[1]);stop.setAttribute('stop-opacity',s[2]);grad.appendChild(stop)});defs.appendChild(grad);const track=document.createElementNS('http://www.w3.org/2000/svg','path');track.setAttribute('fill','none');track.setAttribute('stroke','#35AD73');track.setAttribute('stroke-width','1.2');track.setAttribute('stroke-dasharray','4 4');track.setAttribute('opacity','.3');svgEl.appendChild(track);const glow=document.createElementNS('http://www.w3.org/2000/svg','path');glow.setAttribute('fill','none');glow.setAttribute('stroke',`url(#${gradId})`);glow.setAttribute('stroke-width','5');glow.setAttribute('stroke-linecap','round');svgEl.appendChild(glow);const c1=document.createElementNS('http://www.w3.org/2000/svg','circle');c1.setAttribute('r','3');c1.setAttribute('fill','none');c1.setAttribute('stroke','#35AD73');c1.setAttribute('stroke-width','1.5');c1.setAttribute('opacity','.6');svgEl.appendChild(c1);const c2=document.createElementNS('http://www.w3.org/2000/svg','circle');c2.setAttribute('r','3');c2.setAttribute('fill','none');c2.setAttribute('stroke','#35AD73');c2.setAttribute('stroke-width','1.5');c2.setAttribute('opacity','.6');svgEl.appendChild(c2);const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','3');dot.setAttribute('fill','#7DEBA3');dot.setAttribute('opacity','.95');svgEl.appendChild(dot);return{track,glow,grad,c1,c2,dot,phase:Math.random()*Math.PI*2,speed:.5+Math.random()*.4}});
-function animate(t){const ts=t/1000;logos.forEach((_,i)=>{const p=floatParams[i];const offsetX=Math.sin(ts/p.speed+p.phase)*p.dx+Math.cos(ts/p.speed2+p.phase2)*p.dx2;const offsetY=Math.cos(ts/p.speed*.85+p.phase)*p.dy+Math.sin(ts/p.speed2*1.1+p.phase2)*p.dy2;const nx=positions[i].x+offsetX,ny=positions[i].y+offsetY;nodeEls[i].style.left=nx-36+'px';nodeEls[i].style.top=ny-36+'px';const d=pcbPath(cx,cy,nx,ny,modes[i]);connectors[i].track.setAttribute('d',d);connectors[i].glow.setAttribute('d',d);connectors[i].grad.setAttribute('x1',cx);connectors[i].grad.setAttribute('y1',cy);connectors[i].grad.setAttribute('x2',nx);connectors[i].grad.setAttribute('y2',ny);let pts;if(modes[i]===0){pts=[{x:cx,y:cy},{x:nx,y:cy},{x:nx,y:ny}];connectors[i].c1.setAttribute('cx',nx);connectors[i].c1.setAttribute('cy',cy);connectors[i].c2.setAttribute('cx',nx);connectors[i].c2.setAttribute('cy',ny);connectors[i].c2.setAttribute('opacity','0')}else if(modes[i]===1){pts=[{x:cx,y:cy},{x:cx,y:ny},{x:nx,y:ny}];connectors[i].c1.setAttribute('cx',cx);connectors[i].c1.setAttribute('cy',ny);connectors[i].c2.setAttribute('opacity','0')}else{const mx2=(cx+nx)/2;pts=[{x:cx,y:cy},{x:mx2,y:cy},{x:mx2,y:ny},{x:nx,y:ny}];connectors[i].c1.setAttribute('cx',mx2);connectors[i].c1.setAttribute('cy',cy);connectors[i].c2.setAttribute('cx',mx2);connectors[i].c2.setAttribute('cy',ny);connectors[i].c2.setAttribute('opacity','.6')}const prog=(ts*connectors[i].speed+connectors[i].phase)%1,bp=pointOnPath(pts,prog);connectors[i].dot.setAttribute('cx',bp.x);connectors[i].dot.setAttribute('cy',bp.y)});requestAnimationFrame(animate)}
-requestAnimationFrame(animate);
+  const logos = [
+    { name: 'Slack',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Slack.svg' },
+    { name: 'Gmail',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-GMail.svg' },
+    { name: 'Salesforce',   url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Sales-Force.svg' },
+    { name: 'Autocad',      url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Autocad.svg' },
+    { name: 'Google Suite', url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Google-Suite.svg' },
+    { name: 'Microsoft',    url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Microsoft.svg' },
+    { name: 'HubSpot',      url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-HubSpot.svg' },
+    { name: 'OpenAI',       url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-OpenAI.svg' },
+    { name: 'Claude',       url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Claude.svg' },
+    { name: 'Teams',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Teams.svg' },
+  ];
+
+  const W = 860, H = 520;
+  const cx = W / 2, cy = H / 2; // 430, 260
+
+  // Posizioni fisse ben distanziate attorno al centro, no sovrapposizioni
+  // Cerchio con spacing ~90px tra nodi, distribuiti su 3 "anelli" di raggio variabile
+  const positions = [
+    { x: 160, y: 100 },
+    { x: 340, y: 80  },
+    { x: 520, y: 80  },
+    { x: 690, y: 120 },
+    { x: 710, y: 280 },
+    { x: 660, y: 420 },
+    { x: 470, y: 430 },
+    { x: 270, y: 420 },
+    { x: 140, y: 360 },
+    { x: 130, y: 200 },
+  ];
+
+  const scene = document.getElementById('scene');
+  const svgEl = document.getElementById('lines');
+
+  // Crea nodi fissi
+  const nodeEls = logos.map((logo, i) => {
+    const div = document.createElement('div');
+    div.className = 'node';
+    div.style.left = (positions[i].x - 34) + 'px';
+    div.style.top  = (positions[i].y - 34) + 'px';
+    const img = document.createElement('img');
+    img.src = logo.url;
+    img.alt = logo.name;
+    img.onerror = () => { img.style.display = 'none'; };
+    div.appendChild(img);
+    scene.appendChild(div);
+    return div;
+  });
+
+  // SVG defs
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  svgEl.appendChild(defs);
+
+  // Path PCB a 90°: alterna modalità per varietà visiva
+  function pcbPath(x1, y1, x2, y2, mode) {
+    if (mode === 0) {
+      return `M${x1},${y1} L${x2},${y1} L${x2},${y2}`;
+    } else if (mode === 1) {
+      return `M${x1},${y1} L${x1},${y2} L${x2},${y2}`;
+    } else {
+      const mx = (x1 + x2) / 2;
+      return `M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`;
+    }
+  }
+
+  function pcbPts(x1, y1, x2, y2, mode) {
+    if (mode === 0) return [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2}];
+    if (mode === 1) return [{x:x1,y:y1},{x:x1,y:y2},{x:x2,y:y2}];
+    const mx = (x1 + x2) / 2;
+    return [{x:x1,y:y1},{x:mx,y:y1},{x:mx,y:y2},{x:x2,y:y2}];
+  }
+
+  function pathLen(pts) {
+    let len = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i].x - pts[i-1].x, dy = pts[i].y - pts[i-1].y;
+      len += Math.sqrt(dx*dx + dy*dy);
+    }
+    return len;
+  }
+
+  function pointOnPath(pts, t) {
+    const total = pathLen(pts);
+    let traveled = 0;
+    const target = t * total;
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i].x - pts[i-1].x, dy = pts[i].y - pts[i-1].y;
+      const seg = Math.sqrt(dx*dx + dy*dy);
+      if (traveled + seg >= target) {
+        const rem = (target - traveled) / seg;
+        return { x: pts[i-1].x + dx * rem, y: pts[i-1].y + dy * rem };
+      }
+      traveled += seg;
+    }
+    return pts[pts.length - 1];
+  }
+
+  const modes = [0, 1, 2, 0, 1, 2, 0, 1, 2, 0];
+
+  const connectors = logos.map((_, i) => {
+    const gradId = 'grad' + i;
+    const nx = positions[i].x, ny = positions[i].y;
+
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    grad.setAttribute('x1', cx); grad.setAttribute('y1', cy);
+    grad.setAttribute('x2', nx); grad.setAttribute('y2', ny);
+    const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#7DEBA3'); s1.setAttribute('stop-opacity', '0.1');
+    const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s2.setAttribute('offset', '50%'); s2.setAttribute('stop-color', '#35AD73'); s2.setAttribute('stop-opacity', '0.75');
+    const s3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s3.setAttribute('offset', '100%'); s3.setAttribute('stop-color', '#7DEBA3'); s3.setAttribute('stop-opacity', '0.1');
+    grad.appendChild(s1); grad.appendChild(s2); grad.appendChild(s3);
+    defs.appendChild(grad);
+
+    const d = pcbPath(cx, cy, nx, ny, modes[i]);
+
+    // Traccia tratteggiata
+    const track = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    track.setAttribute('d', d);
+    track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', '#35AD73');
+    track.setAttribute('stroke-width', '1.2');
+    track.setAttribute('stroke-dasharray', '4 4');
+    track.setAttribute('opacity', '0.3');
+    svgEl.appendChild(track);
+
+    // Glow
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    glow.setAttribute('d', d);
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', `url(#${gradId})`);
+    glow.setAttribute('stroke-width', '5');
+    glow.setAttribute('stroke-linecap', 'round');
+    svgEl.appendChild(glow);
+
+    // Cerchietti ai gomiti
+    const pts = pcbPts(cx, cy, nx, ny, modes[i]);
+    pts.slice(1, -1).forEach(p => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+      c.setAttribute('r', '3'); c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', '#35AD73'); c.setAttribute('stroke-width', '1.5');
+      c.setAttribute('opacity', '0.55');
+      svgEl.appendChild(c);
+    });
+
+    // Pallino scorrevole
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', '3');
+    dot.setAttribute('fill', '#7DEBA3');
+    dot.setAttribute('opacity', '0.95');
+    svgEl.appendChild(dot);
+
+    return { dot, pts, phase: Math.random() * Math.PI * 2, speed: 0.4 + Math.random() * 0.35 };
+  });
+
+  // Solo il pallino si muove lungo la traccia fissa
+  function animate(t) {
+    const ts = t / 1000;
+    connectors.forEach((conn) => {
+      const prog = ((ts * conn.speed + conn.phase) % 1 + 1) % 1;
+      const bp = pointOnPath(conn.pts, prog);
+      conn.dot.setAttribute('cx', bp.x);
+      conn.dot.setAttribute('cy', bp.y);
+    });
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
 </script>
 </body>
 </html>
