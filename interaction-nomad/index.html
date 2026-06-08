@@ -11,12 +11,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
     }
     .scene {
       position: relative;
-      width: 860px;
-      height: 520px;
+      width: 900px;
+      height: 500px;
     }
     .lines-svg {
       position: absolute;
@@ -28,13 +30,8 @@
     }
     .node-center {
       position: absolute;
-      left: 505px;
-      top: 50%;
-      width: 112px;
-      height: 112px;
-      border-radius: 50%;
-      background: #35AD73;
-      box-shadow: 0 10px 34px rgba(53,173,115,0.35), 0 0 0 10px rgba(53,173,115,0.08);
+      left: 450px;
+      top: 250px;
       transform: translate(-50%, -50%);
       z-index: 10;
       display: flex;
@@ -42,11 +39,9 @@
       justify-content: center;
     }
     .node-center img {
-      width: 62px;
-      height: 62px;
+      width: 90px;
+      height: 90px;
       object-fit: contain;
-      filter: brightness(0) invert(1);
-      transform: translateX(3px);
     }
     .node {
       position: absolute;
@@ -91,26 +86,30 @@
     { name: 'Teams',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Teams.svg' },
   ];
 
-  const W = 860, H = 520;
-  const cx = 505, cy = H / 2;
+  // Centro esatto della canvas 900x500
+  const W = 900, H = 500;
+  const cx = 450, cy = 250;
 
+  // Posizioni distribuite attorno al centro esatto
+  // Raggio ~170px orizzontale, ~160px verticale
   const positions = [
-    { x: 219, y: 135 },
-    { x: 360, y: 120 },
-    { x: 500, y: 120 },
-    { x: 633, y: 151 },
-    { x: 648, y: 276 },
-    { x: 609, y: 385 },
-    { x: 461, y: 393 },
-    { x: 305, y: 385 },
-    { x: 204, y: 338 },
-    { x: 196, y: 213 },
+    { x: 155, y: 85  },  // 0 top-left        Slack
+    { x: 345, y: 60  },  // 1 top-center-L     Gmail
+    { x: 555, y: 60  },  // 2 top-center-R     Salesforce
+    { x: 745, y: 85  },  // 3 top-right        Autocad
+    { x: 760, y: 250 },  // 4 right            Google Suite
+    { x: 745, y: 415 },  // 5 bottom-right     Microsoft
+    { x: 555, y: 440 },  // 6 bottom-center-R  HubSpot
+    { x: 345, y: 440 },  // 7 bottom-center-L  OpenAI
+    { x: 140, y: 415 },  // 8 bottom-left      Claude
+    { x: 135, y: 250 },  // 9 left             Teams
   ];
 
   const scene = document.getElementById('scene');
   const svgEl = document.getElementById('lines');
 
-  const nodeEls = logos.map((logo, i) => {
+  // Crea nodi fissi
+  logos.map((logo, i) => {
     const div = document.createElement('div');
     div.className = 'node';
     div.style.left = (positions[i].x - 34) + 'px';
@@ -124,6 +123,7 @@
     return div;
   });
 
+  // SVG defs
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
   svgEl.appendChild(defs);
 
@@ -189,19 +189,14 @@
     const d = pcbPath(cx, cy, nx, ny, modes[i]);
 
     const track = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    track.setAttribute('d', d);
-    track.setAttribute('fill', 'none');
-    track.setAttribute('stroke', '#35AD73');
-    track.setAttribute('stroke-width', '1.2');
-    track.setAttribute('stroke-dasharray', '4 4');
-    track.setAttribute('opacity', '0.3');
+    track.setAttribute('d', d); track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', '#35AD73'); track.setAttribute('stroke-width', '1.2');
+    track.setAttribute('stroke-dasharray', '4 4'); track.setAttribute('opacity', '0.3');
     svgEl.appendChild(track);
 
     const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    glow.setAttribute('d', d);
-    glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', `url(#${gradId})`);
-    glow.setAttribute('stroke-width', '5');
+    glow.setAttribute('d', d); glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', `url(#${gradId})`); glow.setAttribute('stroke-width', '5');
     glow.setAttribute('stroke-linecap', 'round');
     svgEl.appendChild(glow);
 
@@ -216,9 +211,7 @@
     });
 
     const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    dot.setAttribute('r', '3');
-    dot.setAttribute('fill', '#7DEBA3');
-    dot.setAttribute('opacity', '0.95');
+    dot.setAttribute('r', '3'); dot.setAttribute('fill', '#7DEBA3'); dot.setAttribute('opacity', '0.95');
     svgEl.appendChild(dot);
 
     return { dot, pts, phase: Math.random() * Math.PI * 2, speed: 0.4 + Math.random() * 0.35 };
