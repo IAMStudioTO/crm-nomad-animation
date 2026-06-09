@@ -37,10 +37,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #35AD73;
+      box-shadow: 0 0 40px rgba(53,173,115,0.35), 0 0 80px rgba(53,173,115,0.15);
     }
     .node-center img {
-      width: 90px;
-      height: 90px;
+      width: 72px;
+      height: 72px;
       object-fit: contain;
     }
     .node {
@@ -93,16 +98,16 @@
   // Posizioni distribuite attorno al centro esatto
   // Raggio ~170px orizzontale, ~160px verticale
   const positions = [
-    { x: 155, y: 85  },  // 0 top-left        Slack
-    { x: 345, y: 60  },  // 1 top-center-L     Gmail
-    { x: 555, y: 60  },  // 2 top-center-R     Salesforce
-    { x: 745, y: 85  },  // 3 top-right        Autocad
-    { x: 760, y: 250 },  // 4 right            Google Suite
-    { x: 745, y: 415 },  // 5 bottom-right     Microsoft
-    { x: 555, y: 440 },  // 6 bottom-center-R  HubSpot
-    { x: 345, y: 440 },  // 7 bottom-center-L  OpenAI
-    { x: 140, y: 415 },  // 8 bottom-left      Claude
-    { x: 135, y: 250 },  // 9 left             Teams
+    { x: 255, y: 147 },  // 0 top-left        Slack
+    { x: 398, y: 119 },  // 1 top-center-L     Gmail
+    { x: 502, y: 119 },  // 2 top-center-R     Salesforce
+    { x: 645, y: 147 },  // 3 top-right        Autocad
+    { x: 645, y: 250 },  // 4 right            Google Suite
+    { x: 645, y: 353 },  // 5 bottom-right     Microsoft
+    { x: 502, y: 381 },  // 6 bottom-center-R  HubSpot
+    { x: 398, y: 381 },  // 7 bottom-center-L  OpenAI
+    { x: 255, y: 353 },  // 8 bottom-left      Claude
+    { x: 255, y: 250 },  // 9 left             Teams
   ];
 
   const scene = document.getElementById('scene');
