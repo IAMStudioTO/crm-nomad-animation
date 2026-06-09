@@ -47,6 +47,7 @@
       width: 72px;
       height: 72px;
       object-fit: contain;
+      filter: brightness(0) invert(1);
     }
     .node {
       position: absolute;
@@ -91,29 +92,25 @@
     { name: 'Teams',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Logo-Teams.svg' },
   ];
 
-  // Centro esatto della canvas 900x500
   const W = 900, H = 500;
   const cx = 450, cy = 250;
 
-  // Posizioni distribuite attorno al centro esatto
-  // Raggio ~170px orizzontale, ~160px verticale
   const positions = [
-    { x: 255, y: 147 },  // 0 top-left        Slack
-    { x: 398, y: 119 },  // 1 top-center-L     Gmail
-    { x: 502, y: 119 },  // 2 top-center-R     Salesforce
-    { x: 645, y: 147 },  // 3 top-right        Autocad
-    { x: 645, y: 250 },  // 4 right            Google Suite
-    { x: 645, y: 353 },  // 5 bottom-right     Microsoft
-    { x: 502, y: 381 },  // 6 bottom-center-R  HubSpot
-    { x: 398, y: 381 },  // 7 bottom-center-L  OpenAI
-    { x: 255, y: 353 },  // 8 bottom-left      Claude
-    { x: 255, y: 250 },  // 9 left             Teams
+    { x: 255, y: 147 },
+    { x: 398, y: 119 },
+    { x: 502, y: 119 },
+    { x: 645, y: 147 },
+    { x: 645, y: 250 },
+    { x: 645, y: 353 },
+    { x: 502, y: 381 },
+    { x: 398, y: 381 },
+    { x: 255, y: 353 },
+    { x: 255, y: 250 },
   ];
 
   const scene = document.getElementById('scene');
   const svgEl = document.getElementById('lines');
 
-  // Crea nodi fissi
   logos.map((logo, i) => {
     const div = document.createElement('div');
     div.className = 'node';
@@ -128,7 +125,6 @@
     return div;
   });
 
-  // SVG defs
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
   svgEl.appendChild(defs);
 
