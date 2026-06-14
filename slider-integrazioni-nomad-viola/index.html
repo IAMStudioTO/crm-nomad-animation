@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOMAD – Logo Slider Viola</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #191919;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .slider-block {
+      width: 430px;
+      padding: 48px 0;
+      position: relative;
+    }
+
+    .nomad-anchor {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: -8%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+    }
+
+    .nomad-anchor img {
+      height: 148px;
+      width: auto;
+      display: block;
+    }
+
+    .fade-left {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 0;
+      width: 120px;
+      background: linear-gradient(to right, #191919 0%, #191919 30%, rgba(25,25,25,0.7) 65%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .fade-right {
+      position: absolute;
+      top: 0; bottom: 0;
+      right: 0;
+      width: 120px;
+      background: linear-gradient(to left, #191919 0%, #191919 30%, rgba(25,25,25,0.7) 65%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .tracks-col {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .track-wrapper {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .track {
+      display: flex;
+      gap: 18px;
+      width: max-content;
+      padding: 6px 0;
+    }
+
+    .track-ltr { animation: scrollLTR 16s linear infinite; }
+    .track-rtl { animation: scrollRTL 16s linear infinite; }
+
+    @keyframes scrollLTR {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes scrollRTL {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .track-rtl { animation-delay: -8s; }
+
+    .logo-circle {
+      width: 68px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .logo-circle img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+<div class="slider-block">
+
+  <div class="nomad-anchor">
+    <img src="https://titan-nomad.ch/wp-content/uploads/2026/06/MINI-Logo-NOMAD-Viola.svg" alt="NOMAD">
+  </div>
+
+  <div class="tracks-col">
+    <div class="fade-left"></div>
+    <div class="fade-right"></div>
+    <div class="track-wrapper">
+      <div class="track track-ltr" id="row1"></div>
+    </div>
+    <div class="track-wrapper">
+      <div class="track track-rtl" id="row2"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const logos = [
+    { name: 'HubSpot',      url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Hubspot-Color.svg' },
+    { name: 'Salesforce',   url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/SalesForce-Color.svg' },
+    { name: 'Claude',       url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Claude-Color.svg' },
+    { name: 'Microsoft',    url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Microsoft-Color.svg' },
+    { name: 'ChatGPT',      url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/ChatGPT-Color.svg' },
+    { name: 'Google Suite', url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Google-Suite-Color.svg' },
+    { name: 'Teams',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Teams-Color.svg' },
+    { name: 'Autocad',      url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Autocad-Color.svg' },
+    { name: 'Gmail',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/GMail-Color.svg' },
+    { name: 'Slack',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Slack-Color.svg' },
+  ];
+
+  function buildRow(el, sequence) {
+    const repeated = [...sequence, ...sequence];
+    repeated.forEach(logo => {
+      const div = document.createElement('div');
+      div.className = 'logo-circle';
+      const img = document.createElement('img');
+      img.src = logo.url;
+      img.alt = logo.name;
+      img.onerror = function () { this.style.display = 'none'; };
+      div.appendChild(img);
+      el.appendChild(div);
+    });
+  }
+
+  buildRow(document.getElementById('row1'), logos);
+  buildRow(document.getElementById('row2'), [...logos.slice(5), ...logos.slice(0, 5)]);
+</script>
+
+</body>
+</html>
