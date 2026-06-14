@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: transparent;
+      background: #191919;
       font-family: sans-serif;
       display: flex;
       align-items: center;
@@ -90,7 +90,6 @@
       100% { transform: translateX(0); }
     }
 
-    /* Riga 2 parte sfasata di metà ciclo così mostra sempre i 5 diversi */
     .track-rtl {
       animation-delay: -8s;
     }
@@ -147,8 +146,6 @@
     { name: 'Slack',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Slack-Color.svg' },
   ];
 
-  // Riga 1: loghi 1-10 in ordine
-  // Riga 2: loghi 6-10 poi 1-5 (sfasati di 5) così in view non si vedono mai gli stessi
   function buildRow(el, sequence) {
     const repeated = [...sequence, ...sequence];
     repeated.forEach(logo => {
