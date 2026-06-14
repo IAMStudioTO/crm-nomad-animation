@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #ffffff;
+      background: transparent;
       font-family: sans-serif;
       display: flex;
       align-items: center;
@@ -17,8 +17,7 @@
     }
 
     .slider-block {
-      width: 100%;
-      max-width: 960px;
+      width: 430px;
       padding: 48px 0;
       position: relative;
     }
@@ -79,8 +78,8 @@
       padding: 6px 0;
     }
 
-    .track-ltr { animation: scrollLTR 24s linear infinite; }
-    .track-rtl { animation: scrollRTL 24s linear infinite; }
+    .track-ltr { animation: scrollLTR 16s linear infinite; }
+    .track-rtl { animation: scrollRTL 16s linear infinite; }
 
     @keyframes scrollLTR {
       0%   { transform: translateX(0); }
@@ -89,6 +88,11 @@
     @keyframes scrollRTL {
       0%   { transform: translateX(-50%); }
       100% { transform: translateX(0); }
+    }
+
+    /* Riga 2 parte sfasata di metà ciclo così mostra sempre i 5 diversi */
+    .track-rtl {
+      animation-delay: -8s;
     }
 
     .logo-circle {
@@ -143,9 +147,11 @@
     { name: 'Slack',        url: 'https://titan-nomad.ch/wp-content/uploads/2026/06/Slack-Color.svg' },
   ];
 
-  function buildRow(el, items) {
-    const doubled = [...items, ...items, ...items];
-    doubled.forEach(logo => {
+  // Riga 1: loghi 1-10 in ordine
+  // Riga 2: loghi 6-10 poi 1-5 (sfasati di 5) così in view non si vedono mai gli stessi
+  function buildRow(el, sequence) {
+    const repeated = [...sequence, ...sequence];
+    repeated.forEach(logo => {
       const div = document.createElement('div');
       div.className = 'logo-circle';
       const img = document.createElement('img');
@@ -158,7 +164,7 @@
   }
 
   buildRow(document.getElementById('row1'), logos);
-  buildRow(document.getElementById('row2'), [...logos].reverse());
+  buildRow(document.getElementById('row2'), [...logos.slice(5), ...logos.slice(0, 5)]);
 </script>
 
 </body>
