@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOMAD Support Badge</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:transparent; display:flex; align-items:center; justify-content:center; }
+  .nm-wrap {
+    width:100px; height:100px;
+    border-radius:16px;
+    background:#FFFFFF; border:1px solid #E4E4E1;
+    overflow:hidden;
+    position:relative;
+    font-family:'Montserrat',sans-serif;
+  }
+  .nm-screen {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:6px;
+    opacity:0;
+    transition:opacity .35s ease;
+  }
+  .nm-screen.active { opacity:1; }
+
+  /* S0 — pulsing support ring with a check */
+  .s0-label { font-size:7px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#35AD73; }
+  .s0-ring { position:relative; width:34px; height:34px; }
+  .s0-pulse { position:absolute; inset:0; border-radius:50%; border:2px solid #35AD73; opacity:0; animation:pulse 2s ease-out infinite; }
+  .s0-pulse:nth-child(2){ animation-delay:.66s; }
+  .s0-pulse:nth-child(3){ animation-delay:1.33s; }
+  @keyframes pulse{ 0%{ transform:scale(.5); opacity:.6 } 100%{ transform:scale(1.15); opacity:0 } }
+  .s0-core { position:absolute; inset:9px; border-radius:50%; background:#EAF7F1; display:flex; align-items:center; justify-content:center; }
+  .s0-core::after { content:''; width:5px; height:9px; border:solid #35AD73; border-width:0 2px 2px 0; transform:rotate(45deg) translate(-1px,-1px); }
+
+  /* S1 — AI integration growth bars */
+  .s1-label { font-size:7px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#35AD73; }
+  .s1-rows { display:flex; flex-direction:column; gap:5px; width:80px; }
+  .s1-row { height:7px; border-radius:3px; background:#F6F6F5; overflow:hidden; position:relative; }
+  .s1-fill { position:absolute; left:0; top:0; bottom:0; border-radius:3px; width:0; background:#35AD73; transition:width .8s cubic-bezier(.4,0,.2,1); }
+
+  .nm-nav { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); display:flex; gap:3px; }
+  .nm-ndot { width:4px; height:4px; border-radius:50%; background:#D4D4CE; transition:all .3s; }
+  .nm-ndot.on { background:#35AD73; width:10px; border-radius:2px; }
+</style>
+</head>
+<body>
+<div class="nm-wrap">
+  <div class="nm-screen active" id="s0">
+    <div class="s0-label">Al tuo fianco</div>
+    <div class="s0-ring">
+      <div class="s0-pulse"></div>
+      <div class="s0-pulse"></div>
+      <div class="s0-pulse"></div>
+      <div class="s0-core"></div>
+    </div>
+  </div>
+  <div class="nm-screen" id="s1">
+    <div class="s1-label">Integrazione AI</div>
+    <div class="s1-rows">
+      <div class="s1-row"><div class="s1-fill" id="f1"></div></div>
+      <div class="s1-row"><div class="s1-fill" id="f2"></div></div>
+      <div class="s1-row"><div class="s1-fill" id="f3"></div></div>
+    </div>
+  </div>
+  <div class="nm-nav">
+    <div class="nm-ndot on" id="nd0"></div>
+    <div class="nm-ndot" id="nd1"></div>
+  </div>
+</div>
+<script>
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+function show(n){
+  [0,1].forEach(i=>{
+    document.getElementById('s'+i).classList.toggle('active',i===n);
+    document.getElementById('nd'+i).classList.toggle('on',i===n);
+  });
+}
+function reset(){
+  document.getElementById('f1').style.width='0';
+  document.getElementById('f2').style.width='0';
+  document.getElementById('f3').style.width='0';
+}
+async function run(){
+  reset();
+
+  // S0 — pulsing support ring
+  show(0);
+  await delay(2600);
+
+  // S1 — AI integration bars filling, climbing higher
+  show(1);
+  await delay(150);
+  document.getElementById('f1').style.width='55%';
+  await delay(250);
+  document.getElementById('f2').style.width='72%';
+  await delay(250);
+  document.getElementById('f3').style.width='94%';
+  await delay(2400);
+
+  await delay(350);
+  run();
+}
+run();
+</script>
+</body>
+</html>
