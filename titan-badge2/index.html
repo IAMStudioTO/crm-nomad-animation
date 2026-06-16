@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TITAN Badge</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:transparent; display:flex; align-items:center; justify-content:center; }
+  .tt-wrap {
+    width:100px; height:100px;
+    border-radius:16px;
+    background:#FFFFFF; border:1px solid #E4E4E1;
+    overflow:hidden;
+    position:relative;
+    font-family:'Montserrat',sans-serif;
+  }
+  .tt-screen {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:5px;
+    opacity:0;
+    transition:opacity .35s ease;
+  }
+  .tt-screen.active { opacity:1; }
+
+  /* S0 — scanning the workflow */
+  .s1-label { font-size:7px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#35AD73; }
+  .s1-grid { display:flex; flex-direction:column; gap:4px; width:80px; }
+  .s1-task { display:flex; align-items:center; gap:5px; opacity:0; transform:translateX(-4px); transition:opacity .3s, transform .3s; }
+  .s1-task.in { opacity:1; transform:translateX(0); }
+  .s1-check { width:9px; height:9px; border-radius:3px; border:1.5px solid #D4D4CE; flex-shrink:0; position:relative; transition:all .3s; }
+  .s1-task.done .s1-check { background:#35AD73; border-color:#35AD73; }
+  .s1-task.done .s1-check::after { content:''; position:absolute; left:2.5px; top:.5px; width:2px; height:4px; border:solid #fff; border-width:0 1.5px 1.5px 0; transform:rotate(45deg); }
+  .s1-bar { height:5px; border-radius:2px; background:#F6F6F5; flex:1; }
+
+  /* S1 — quick wins flagged */
+  .s2-label { font-size:7px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#E8960A; }
+  .s2-tags { display:flex; flex-direction:column; gap:4px; align-items:center; }
+  .s2-tag { font-size:7px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; background:#FEF3E0; color:#9A5E00; padding:2px 7px; border-radius:20px; opacity:0; transform:scale(.85); transition:opacity .3s, transform .3s; }
+  .s2-tag.in { opacity:1; transform:scale(1); }
+  .s2-bolt { color:#E8960A; }
+
+  .tt-nav { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); display:flex; gap:3px; }
+  .tt-ndot { width:4px; height:4px; border-radius:50%; background:#D4D4CE; transition:all .3s; }
+  .tt-ndot.on { background:#35AD73; width:10px; border-radius:2px; }
+</style>
+</head>
+<body>
+<div class="tt-wrap">
+  <div class="tt-screen active" id="s0">
+    <div class="s1-label">Scansione</div>
+    <div class="s1-grid">
+      <div class="s1-task" id="t1"><div class="s1-check"></div><div class="s1-bar"></div></div>
+      <div class="s1-task" id="t2"><div class="s1-check"></div><div class="s1-bar"></div></div>
+      <div class="s1-task" id="t3"><div class="s1-check"></div><div class="s1-bar"></div></div>
+    </div>
+  </div>
+  <div class="tt-screen" id="s1">
+    <div class="s2-label">Quick Win</div>
+    <div class="s2-tags">
+      <div class="s2-tag" id="q1"><span class="s2-bolt">&#9889;</span> Automazione</div>
+      <div class="s2-tag" id="q2"><span class="s2-bolt">&#9889;</span> Alto impatto</div>
+    </div>
+  </div>
+  <div class="tt-nav">
+    <div class="tt-ndot on" id="nd0"></div>
+    <div class="tt-ndot" id="nd1"></div>
+  </div>
+</div>
+<script>
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+function show(n){
+  [0,1].forEach(i=>{
+    document.getElementById('s'+i).classList.toggle('active',i===n);
+    document.getElementById('nd'+i).classList.toggle('on',i===n);
+  });
+}
+function reset(){
+  ['t1','t2','t3'].forEach(id=>document.getElementById(id).classList.remove('in','done'));
+  ['q1','q2'].forEach(id=>document.getElementById(id).classList.remove('in'));
+}
+async function run(){
+  reset();
+
+  // S0 — scan workflow tasks, then check them off
+  show(0);
+  const tasks=['t1','t2','t3'];
+  for(const id of tasks){
+    document.getElementById(id).classList.add('in');
+    await delay(220);
+  }
+  await delay(300);
+  for(const id of tasks){
+    document.getElementById(id).classList.add('done');
+    await delay(280);
+  }
+  await delay(900);
+
+  // S1 — quick wins pop in
+  show(1);
+  await delay(150);
+  document.getElementById('q1').classList.add('in');
+  await delay(300);
+  document.getElementById('q2').classList.add('in');
+  await delay(2000);
+
+  await delay(350);
+  run();
+}
+run();
+</script>
+</body>
+</html>
