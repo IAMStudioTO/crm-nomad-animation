@@ -19,7 +19,7 @@
     color:var(--ink); font-family:'Montserrat',system-ui,sans-serif;
     display:flex; align-items:center; justify-content:center; min-height:100%; overflow:hidden;
   }
-  .scene{position:relative; z-index:2; width:500px; height:500px; max-width:97vw; max-height:97vh;}
+  .scene{position:relative; z-index:2; width:500px; height:500px; transform:scale(var(--fit,1)); transform-origin:center center;}
 
   .eyebrow{position:absolute; top:0; left:50%; transform:translateX(-50%);
     font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:.34em; color:var(--dim); text-transform:uppercase;
@@ -294,10 +294,30 @@ function placeLabels(){
     l.style.top=(p.y+voff)+"px";
   });
 }
-function layout(){ place(); placeLabels(); }
+function fitToViewport(){
+  const sc=scene;
+  // measure bounds of scene + all labels in viewport px (currently at scale 1)
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  const els=[sc, ...sc.querySelectorAll('.label')];
+  els.forEach(e=>{
+    const r=e.getBoundingClientRect();
+    minX=Math.min(minX,r.left); minY=Math.min(minY,r.top);
+    maxX=Math.max(maxX,r.right); maxY=Math.max(maxY,r.bottom);
+  });
+  const contentW=maxX-minX, contentH=maxY-minY;
+  const availW=window.innerWidth*0.90, availH=window.innerHeight*0.94;
+  const fit=Math.min(1, availW/contentW, availH/contentH);
+  sc.style.setProperty('--fit',fit.toFixed(3));
+}
+function layout(){
+  scene.style.setProperty('--fit',1); // position math runs unscaled
+  place(); placeLabels();
+  fitToViewport();                    // then scale to fit viewport
+}
 window.addEventListener('resize',layout);
-window.addEventListener('load',layout);
+window.addEventListener('load',()=>{layout(); setTimeout(layout,60);});
 layout();
+setTimeout(layout,60);
 </script>
 </body>
 </html>
