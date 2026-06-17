@@ -19,7 +19,7 @@
     color:var(--ink); font-family:'Montserrat',system-ui,sans-serif;
     display:flex; align-items:center; justify-content:center; min-height:100%; overflow:hidden;
   }
-  .scene{position:relative; z-index:2; width:500px; height:500px; transform:scale(var(--fit,1)); transform-origin:center center;}
+  .scene{position:relative; z-index:2; width:500px; height:500px; transform:translate(var(--shift-x,0px),var(--shift-y,0px)) scale(var(--fit,1)); transform-origin:center center;}
 
   .eyebrow{position:absolute; top:0; left:50%; transform:translateX(-50%);
     font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:.34em; color:var(--dim); text-transform:uppercase;
@@ -296,7 +296,10 @@ function placeLabels(){
 }
 function fitToViewport(){
   const sc=scene;
-  // measure bounds of scene + all labels in viewport px (currently at scale 1)
+  sc.style.setProperty('--fit',1);
+  sc.style.setProperty('--shift-x','0px');
+  sc.style.setProperty('--shift-y','0px');
+
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   const els=[sc, ...sc.querySelectorAll('.label')];
   els.forEach(e=>{
@@ -304,15 +307,30 @@ function fitToViewport(){
     minX=Math.min(minX,r.left); minY=Math.min(minY,r.top);
     maxX=Math.max(maxX,r.right); maxY=Math.max(maxY,r.bottom);
   });
+
   const contentW=maxX-minX, contentH=maxY-minY;
-  const availW=window.innerWidth*0.90, availH=window.innerHeight*0.94;
-  const fit=Math.min(1, availW/contentW, availH/contentH);
-  sc.style.setProperty('--fit',fit.toFixed(3));
+  const pad=6;
+  const fit=Math.min(1,(window.innerWidth-pad*2)/contentW,(window.innerHeight-pad*2)/contentH);
+  const sceneRect=sc.getBoundingClientRect();
+  const sceneCX=sceneRect.left+sceneRect.width/2;
+  const sceneCY=sceneRect.top+sceneRect.height/2;
+  const contentCX=(minX+maxX)/2;
+  const contentCY=(minY+maxY)/2;
+  const targetCX=window.innerWidth/2;
+  const targetCY=window.innerHeight/2;
+  const shiftX=targetCX-(sceneCX+(contentCX-sceneCX)*fit);
+  const shiftY=targetCY-(sceneCY+(contentCY-sceneCY)*fit);
+
+  sc.style.setProperty('--fit',fit.toFixed(4));
+  sc.style.setProperty('--shift-x',shiftX.toFixed(2)+'px');
+  sc.style.setProperty('--shift-y',shiftY.toFixed(2)+'px');
 }
 function layout(){
-  scene.style.setProperty('--fit',1); // position math runs unscaled
+  scene.style.setProperty('--fit',1);
+  scene.style.setProperty('--shift-x','0px');
+  scene.style.setProperty('--shift-y','0px');
   place(); placeLabels();
-  fitToViewport();                    // then scale to fit viewport
+  fitToViewport();
 }
 window.addEventListener('resize',layout);
 window.addEventListener('load',()=>{layout(); setTimeout(layout,60);});
