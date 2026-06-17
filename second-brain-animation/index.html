@@ -150,9 +150,9 @@ const startAngle=-90;
 const RX=20*Math.PI/180, RZ=-3*Math.PI/180, PERSP=1100;
 function project(vx,vy){
   const rect=chart.getBoundingClientRect();
-  const sx=rect.width/640, sy=rect.height/640;
+  const s=Math.min(rect.width,rect.height)/640; // uniform scale (preserveAspectRatio=meet)
   // to px, centered on transform-origin (chart center 320,320)
-  let X=(vx-320)*sx, Y=(vy-320)*sy, Z=0;
+  let X=(vx-320)*s, Y=(vy-320)*s, Z=0;
   // rotateZ
   let x1=X*Math.cos(RZ)-Y*Math.sin(RZ);
   let y1=X*Math.sin(RZ)+Y*Math.cos(RZ);
@@ -170,7 +170,6 @@ function project(vx,vy){
 function place(){
   const rect=chart.getBoundingClientRect();
   const sceneRect=scene.getBoundingClientRect();
-  const sx=rect.width/640, sy=rect.height/640;
   const discEl=document.querySelector('.disc');
   let cxPx, cyPx;
   if(discEl){
@@ -180,7 +179,8 @@ function place(){
   }else{
     const p=project(coreX,coreY); cxPx=p.x; cyPx=p.y;
   }
-  const bw=coreR*2*sx, bh=coreR*2*sy;
+  const s=Math.min(rect.width,rect.height)/640; // uniform scale (matches SVG preserveAspectRatio=meet)
+  const bw=coreR*2*s, bh=coreR*2*s;
   corebox.style.left=(cxPx - bw*0.05)+"px";
   corebox.style.top=(cyPx - bh*0.10)+"px";
   corebox.style.width=bw+"px";
