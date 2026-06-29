@@ -109,6 +109,11 @@
       height: 42px;
       object-fit: contain;
     }
+
+    .logo-circle.logo-large img {
+      width: 63px;
+      height: 63px;
+    }
   </style>
 </head>
 <body>
@@ -151,6 +156,9 @@
     repeated.forEach(logo => {
       const div = document.createElement('div');
       div.className = 'logo-circle';
+      if (logo.name === 'HubSpot' || logo.name === 'Claude') {
+        div.classList.add('logo-large');
+      }
       const img = document.createElement('img');
       img.src = logo.url;
       img.alt = logo.name;
