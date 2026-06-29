@@ -71,11 +71,15 @@
       width: 100%;
     }
 
+    .track-wrapper + .track-wrapper {
+      margin-top: -24px;
+    }
+
     .track {
       display: flex;
       gap: 18px;
       width: max-content;
-      padding: 6px 0;
+      padding: 0;
     }
 
     .track-ltr { animation: scrollLTR 16s linear infinite; }
