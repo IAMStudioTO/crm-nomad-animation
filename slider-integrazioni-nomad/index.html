@@ -71,10 +71,6 @@
       width: 100%;
     }
 
-    .track-wrapper + .track-wrapper {
-      margin-top: -5px;
-    }
-
     .track {
       display: flex;
       align-items: center;
@@ -84,24 +80,15 @@
     }
 
     .track-ltr { animation: scrollLTR 16s linear infinite; }
-    .track-rtl { animation: scrollRTL 16s linear infinite; }
 
     @keyframes scrollLTR {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-    @keyframes scrollRTL {
-      0%   { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-
-    .track-rtl {
-      animation-delay: -8s;
-    }
 
     .logo-circle {
-      width: 68px;
-      height: 68px;
+      width: 84px;
+      height: 84px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -110,14 +97,12 @@
     }
 
     .logo-circle img {
-      width: 42px;
-      height: 42px;
+      width: 58px;
+      height: 58px;
       object-fit: contain;
     }
 
     .logo-circle.logo-large {
-      width: 68px;
-      height: 68px;
       overflow: visible;
     }
 
@@ -142,9 +127,6 @@
     <div class="fade-right"></div>
     <div class="track-wrapper">
       <div class="track track-ltr" id="row1"></div>
-    </div>
-    <div class="track-wrapper">
-      <div class="track track-rtl" id="row2"></div>
     </div>
   </div>
 
@@ -182,7 +164,6 @@
   }
 
   buildRow(document.getElementById('row1'), logos);
-  buildRow(document.getElementById('row2'), [...logos.slice(5), ...logos.slice(0, 5)]);
 </script>
 
 </body>
